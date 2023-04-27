@@ -13,9 +13,11 @@ namespace pomogaybo
     {
         static void Main(string[] args)
         {
+            FileReader reader = new FileReader();
+
             while (true)
             {
-                Console.Write(Directory.GetCurrentDirectory() + "");
+                Console.WriteLine(Directory.GetCurrentDirectory());
                 string query = Console.ReadLine();
 
                 if (query == "exit")
@@ -61,6 +63,34 @@ namespace pomogaybo
                     }
 
                 }
+                else if (query.StartsWith("cat"))
+                {
+                    try
+                    {
+                        string path = query.Replace("cat", "");
+                        string path2 = path.Replace(" ", "");
+                        Console.WriteLine(reader.ReadFile(path2));
+                    }
+                    catch (Exception e)
+                    {
+                        Console.WriteLine(e.Message);
+                    }
+                }
+                else if (query.StartsWith("touch"))
+                {
+                    string path = query.Replace("touch", "");
+                    string path2 = path.Replace(" ", "");
+
+                    try 
+                    {
+                        StreamWriter writer = File.CreateText(path2);
+                    }
+                    catch (Exception e)
+                    {
+                        Console.WriteLine(e.Message);
+                    }
+                    
+                }
                 else
                 {
                     switch (query)
@@ -99,8 +129,10 @@ namespace pomogaybo
                            Console.Clear();
 
                            break;
+
                         case "date":
                             Console.WriteLine(DateTime.Now.ToString());
+
                             break;
 
                     }
