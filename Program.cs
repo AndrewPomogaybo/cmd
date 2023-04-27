@@ -5,6 +5,7 @@ using System.IO;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using System.Web.UI.MobileControls;
 
 namespace pomogaybo
 {
@@ -12,38 +13,99 @@ namespace pomogaybo
     {
         static void Main(string[] args)
         {
-            string query = Console.ReadLine();
-
-            switch (query) 
+            while (true)
             {
-                case "ls":
-                    string dirName = "C:\\";
-                    if (Directory.Exists(dirName))
+                Console.Write(Directory.GetCurrentDirectory() + "");
+                string query = Console.ReadLine();
+
+                if (query == "exit")
+                {
+                    break;
+                }
+                else if (query.StartsWith("cd"))
+                {
+                    try
                     {
-                        string[] dirs = Directory.GetDirectories(dirName);
-                        foreach (string s in dirs)
-                        {
-                            Console.WriteLine(s);
-                        }
-                        Console.WriteLine();
-                        string[] files = Directory.GetFiles(dirName);
-                        foreach (string s in files)
-                        {
-                            Console.WriteLine(s);
-                        }
+                        string[] path = query.Split('\\');
+                        string pathNew = string.Join("\\", path);
+                        string rightPath = pathNew.Replace("cd", "");
+                        Console.WriteLine("");
+                        Directory.SetCurrentDirectory(rightPath);
                     }
-                    break;
-                case "--help":
-                    Process process = new Process();
-                    process.StartInfo.FileName = "git";
-                    process.StartInfo.Arguments = "help";
-                    process.StartInfo.UseShellExecute = false;
-                    process.StartInfo.RedirectStandardOutput = true;
-                    process.Start();
-                    query = process.StandardOutput.ReadToEnd();
-                    Console.WriteLine(query);
-                    break;
-            }
+                    catch (Exception e)
+                    {
+                        Console.WriteLine(e.Message);
+                    }
+                }
+                else if (query.StartsWith("mkdir"))
+                {
+                    string path = query.Replace("mkdir", "");
+
+                    if (!Directory.Exists(path))
+                    {
+                        Directory.CreateDirectory(path);
+                    }
+                }
+                else if (query.StartsWith("rmdir"))
+                {
+                    string path = query.Replace("rmdir", "");
+
+                    try 
+                    {
+                        Directory.Delete(path, true);
+                        Console.WriteLine("Каталог удален");
+                    }
+                    catch(Exception e)
+                    {
+                        Console.WriteLine(e.Message);
+                    }
+
+                }
+                else
+                {
+                    switch (query)
+                    {
+                        case "ls":
+                            string dirName = Directory.GetCurrentDirectory();
+                            if (Directory.Exists(dirName))
+                            {
+                                string[] dirs = Directory.GetDirectories(dirName);
+                                   foreach (string s in dirs)
+                                   {
+                                       Console.WriteLine(s);
+                                   }
+                                   Console.WriteLine();
+                                   string[] files = Directory.GetFiles(dirName);
+                                   foreach (string s in files)
+                                   {
+                                       Console.WriteLine(s);
+                                   }
+                            }
+                           
+                           break;
+
+                        case "--help":
+                           Process process = new Process();
+                           process.StartInfo.FileName = "git";
+                           process.StartInfo.Arguments = "help";
+                           process.StartInfo.UseShellExecute = false;
+                           process.StartInfo.RedirectStandardOutput = true;
+                           process.Start();
+                           query = process.StandardOutput.ReadToEnd();
+                           Console.WriteLine(query);
+                           break;
+
+                        case "clear":
+                           Console.Clear();
+
+                           break;
+                        case "date":
+                            Console.WriteLine(DateTime.Now.ToString());
+                            break;
+
+                    }
+                }
+            }       
             Console.ReadKey();
         }
     }
