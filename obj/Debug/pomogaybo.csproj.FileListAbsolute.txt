@@ -1,0 +1,7 @@
+C:\Users\Student\Desktop\pomogaybo\bin\Debug\pomogaybo.exe.config
+C:\Users\Student\Desktop\pomogaybo\bin\Debug\pomogaybo.exe
+C:\Users\Student\Desktop\pomogaybo\bin\Debug\pomogaybo.pdb
+C:\Users\Student\Desktop\pomogaybo\obj\Debug\pomogaybo.csproj.AssemblyReference.cache
+C:\Users\Student\Desktop\pomogaybo\obj\Debug\pomogaybo.csproj.CoreCompileInputs.cache
+C:\Users\Student\Desktop\pomogaybo\obj\Debug\pomogaybo.exe
+C:\Users\Student\Desktop\pomogaybo\obj\Debug\pomogaybo.pdb
