@@ -91,6 +91,38 @@ namespace pomogaybo
                     }
                     
                 }
+                else if (query.StartsWith("rm"))
+                {
+                    string path = query.Replace("rm", "");
+                    string path2 = path.Replace(" ", "");
+                    try
+                    {
+                        File.Delete(path2);
+                    }
+                    catch (Exception e)
+                    {
+                        Console.WriteLine(e.Message);
+                    }
+                }
+                else if (query.StartsWith("head"))
+                {
+                    string path = query.Replace("head", "");
+                    string path2 = path.Replace(" ", "");
+                    int countRows = 10;
+
+                    using (StreamReader file = new StreamReader(path2))
+                    {
+                        for(int i = 0; i < countRows; i++)
+                        {
+                            string line = file.ReadLine();
+                            if (line == null)
+                            {
+                                break;
+                            }
+                            Console.WriteLine(line);
+                        }
+                    }
+                }
                 else
                 {
                     switch (query)
@@ -111,10 +143,9 @@ namespace pomogaybo
                                        Console.WriteLine(s);
                                    }
                             }
-                           
                            break;
 
-                        case "--help":
+                        case "help":
                            Process process = new Process();
                            process.StartInfo.FileName = "git";
                            process.StartInfo.Arguments = "help";
@@ -127,12 +158,14 @@ namespace pomogaybo
 
                         case "clear":
                            Console.Clear();
-
                            break;
 
                         case "date":
                             Console.WriteLine(DateTime.Now.ToString());
+                            break;
 
+                        case "pwd":
+                            Console.WriteLine(Directory.GetCurrentDirectory());
                             break;
 
                     }
