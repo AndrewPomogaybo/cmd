@@ -5,3 +5,5 @@ C:\Users\Student\Desktop\pomogaybo\obj\Debug\pomogaybo.csproj.AssemblyReference.
 C:\Users\Student\Desktop\pomogaybo\obj\Debug\pomogaybo.csproj.CoreCompileInputs.cache
 C:\Users\Student\Desktop\pomogaybo\obj\Debug\pomogaybo.exe
 C:\Users\Student\Desktop\pomogaybo\obj\Debug\pomogaybo.pdb
+C:\Users\Student\Desktop\pomogaybo\obj\Debug\Interop.Scripting.dll
+C:\Users\Student\Desktop\pomogaybo\obj\Debug\pomogaybo.csproj.ResolveComReference.cache
