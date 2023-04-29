@@ -1,0 +1,28 @@
+student@247-7 MINGW64 ~/Desktop/pomogaybo (master)
+$ git add --all
+
+student@247-7 MINGW64 ~/Desktop/pomogaybo (master)
+$ git commmit -m "Обновлены функции touch и rm теперь можно добавлять и удалять сразу несколько файлов"
+git: 'commmit' is not a git command. See 'git --help'.
+
+The most similar command is
+        commit
+
+student@247-7 MINGW64 ~/Desktop/pomogaybo (master)
+$ git add --all
+
+student@247-7 MINGW64 ~/Desktop/pomogaybo (master)
+$ git commit -m "Добавлены аргументы для date и mkdir"
+[master f1b5a16] Добавлены аргументы для date и mkdir
+ 8 files changed, 34 insertions(+), 64 deletions(-)
+ delete mode 100644 bin/Debug/file.txt
+
+student@247-7 MINGW64 ~/Desktop/pomogaybo (master)
+$ mkdir -v test
+mkdir: created directory 'test'
+
+student@247-7 MINGW64 ~/Desktop/pomogaybo (master)
+$ ^C
+
+student@247-7 MINGW64 ~/Desktop/pomogaybo (master)
+$

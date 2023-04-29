@@ -30,12 +30,17 @@ namespace pomogaybo
                 }
                 else if (query.StartsWith("mkdir -v"))
                 {
-                    string path = query.Replace("mkdir -v", "");
+                    string path = query.Replace("mkdir -v ", "");
+                    string[] folders = path.Split(' ');
+
                     try
                     {
-                        if (!Directory.Exists(path))
-                            Directory.CreateDirectory(path);
-                        Console.WriteLine("mkdir: created directory " + path);
+                        foreach (string fNAme in folders)
+                        {
+                            Directory.CreateDirectory(fNAme);
+                            Console.WriteLine("mkdir: created directory: " + "'" + fNAme + "'");
+                        }
+                        
                     }
                     catch (Exception e)
                     {
@@ -110,6 +115,20 @@ namespace pomogaybo
                     {
                         Console.WriteLine(e.Message);
                     }
+                }
+                else if (query.StartsWith("cat -n"))
+                {
+                    string file = query.Replace("cat -n ", "");
+                    int lineNumber = 1;
+                    using (StreamReader reader = new StreamReader(file))
+                    {
+                        string line;
+                        while ((line = reader.ReadLine()) != null)
+                        {
+                            Console.WriteLine("{0}\t{1}", lineNumber++, line);
+                        }
+                    }
+
                 }
                 else if(query.StartsWith("rm") && query.EndsWith("*"))
                 {
