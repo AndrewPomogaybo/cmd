@@ -168,38 +168,50 @@ namespace pomogaybo
                     string path = query.Replace("mkdir ", "");
                     string[] folders = path.Split(' ');
 
-                    foreach (string fNAme in folders)
+                    try
                     {
-                        Directory.CreateDirectory(fNAme);
+                        foreach (string fNAme in folders)
+                        {
+                            Directory.CreateDirectory(fNAme);
+                        }
                     }
-                    /*try
-                    {
-                        if (!Directory.Exists(path))
-                            Directory.CreateDirectory(path);
-                    }
-                    catch (Exception e)
+                    catch(Exception e)
                     {
                         Console.WriteLine(e.Message);
-                    }*/
+                    }
                 }
                 else if (query.StartsWith("rmdir"))
                 {
                     string folders = query.Replace("rmdir ", "");
-                    p.GetProcess("cmd.exe", $"/c rd /s /q {folders}");
+                    p.DoProcess("cmd.exe", $"/c rd /s /q {folders}");
                 }    
                 else if (query.StartsWith("cat"))
                 {
                     string path = query.Replace("cat", "");
                     Console.WriteLine(rl.ReadLinesAll(path.Replace(" ", "")));
                 }
+                else if (query.StartsWith("date -d") && query.EndsWith("'tomorrow'"))
+                {
+                    DateTime tom = DateTime.Today.AddDays(1);
+                    string tomDay = tom.ToString("ddd MMMM dd HH:mm:ss yyyy");
+                    Console.WriteLine(tomDay);
+                }
+                else if (query.StartsWith("date -d") && query.EndsWith("'yesterday'"))
+                {
+                    DateTime yes = DateTime.Today.AddDays(-1);
+                    string yesDay = yes.ToString("ddd MMMM dd HH:mm:ss yyyy");
+                    Console.WriteLine(yesDay);
+                }
                 else if (query.StartsWith("touch"))
                 {
-                    string path = query.Replace("touch", "");
-                    string path2 = path.Replace(" ", "");
-
+                    string path = query.Replace("touch ", "");
+                    string[] files = path.Split(' '); 
                     try
                     {
-                        StreamWriter writer = File.CreateText(path2);
+                        foreach (string fileName in files)
+                        {
+                            File.CreateText(fileName);
+                        }
                     }
                     catch (Exception e)
                     {
@@ -209,21 +221,12 @@ namespace pomogaybo
                 }
                 else if (query.StartsWith("rm"))
                 {
-                    string path = query.Replace("rm", "");
-                    string path2 = path.Replace(" ", "");
-                    try
-                    {
-                        File.Delete(path2);
-                    }
-                    catch (Exception e)
-                    {
-                        Console.WriteLine(e.Message);
-                    }
+                    string path = query.Replace("rm ", "");
+                    p.DoProcess("cmd.exe", $"/c del /s /q {path}");
                 }
                 else if (query.StartsWith("head"))
                 {
-                    string path = query.Replace("head", "");
-                    rl.Read(10, path.Replace("", ""));
+                    rl.Read(10, query.Replace("head ", ""));
                 }
                 else if (query.StartsWith("ls") && query.EndsWith("-l"))
                 {
@@ -294,7 +297,7 @@ namespace pomogaybo
                             break;
 
                         case "man":
-                            p.GetProcess("cmd.exe", "/?");
+                            p.DoProcess("cmd.exe", "/?");
                             process.WaitForExit();
                             query = process.StandardOutput.ReadToEnd();
                             Console.WriteLine(query);
@@ -305,7 +308,9 @@ namespace pomogaybo
                             break;
 
                         case "date":
-                            Console.WriteLine(DateTime.Now.ToString());
+                            DateTime currenDate = DateTime.Now;
+                            string date = currenDate.ToString("ddd MMMM dd HH:mm:ss yyyy");
+                            Console.WriteLine(date);
                             break;
 
                         case "pwd":

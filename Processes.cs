@@ -27,7 +27,7 @@ namespace pomogaybo
             }
         }
 
-        public void GetProcess(string file, string argument)
+        public void DoProcess(string file, string argument)
         {
             try
             {
