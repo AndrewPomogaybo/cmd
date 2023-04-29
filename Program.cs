@@ -17,6 +17,7 @@ namespace pomogaybo
             ReadLiner rl = new ReadLiner();
             Processes p = new Processes();
             Size size = new Size();
+            Process process = new Process();
 
             while (true)
             {
@@ -26,6 +27,20 @@ namespace pomogaybo
                 if (query == "exit")
                 {
                     break;
+                }
+                else if (query.StartsWith("mkdir -v"))
+                {
+                    string path = query.Replace("mkdir -v", "");
+                    try
+                    {
+                        if (!Directory.Exists(path))
+                            Directory.CreateDirectory(path);
+                        Console.WriteLine("mkdir: created directory " + path);
+                    }
+                    catch (Exception e)
+                    {
+                        Console.WriteLine(e.Message);
+                    }
                 }
                 else if (query.StartsWith("cd") && query.EndsWith("--help"))
                 {
@@ -75,6 +90,64 @@ namespace pomogaybo
                 {
                     Console.WriteLine(rl.ReadLinesAll(@"C:\Users\Student\Desktop\pomogaybo\args\du.txt"));
                 }
+                else if (query.StartsWith("df") && query.EndsWith("--help"))
+                {
+                    Console.WriteLine(rl.ReadLinesAll(@"C:\Users\Student\Desktop\pomogaybo\args\df.txt"));
+                }
+                else if (query.StartsWith("wc") && query.EndsWith("--help"))
+                {
+                    Console.WriteLine(rl.ReadLinesAll(@"C:\Users\Student\Desktop\pomogaybo\args\wc.txt"));
+                }
+                else if(query.StartsWith("rm") && query.EndsWith("-r"))
+                {
+                    string directory = Directory.GetCurrentDirectory();
+                    try
+                    {
+                        Array.ForEach(Directory.GetFiles(directory), File.Delete);
+                        Array.ForEach(Directory.GetDirectories(directory), Directory.Delete);
+                    }
+                    catch (Exception e)
+                    {
+                        Console.WriteLine(e.Message);
+                    }
+                }
+                else if(query.StartsWith("rm") && query.EndsWith("*"))
+                {
+                    DirectoryInfo info = new DirectoryInfo(".");
+                    foreach (FileInfo file in info.GetFiles())
+                    {
+                        file.Delete();
+                    }
+                }
+                else if (query.StartsWith("wc"))
+                {
+                    string path = Directory.GetCurrentDirectory();
+
+                    int lineCount = 0;
+                    int wordCount = 0;
+                    int byteCount = 0;
+
+                    try
+                    {
+                        using (StreamReader reader = new StreamReader(path))
+                        {
+                            string line;
+                            while ((line = reader.ReadLine()) != null)
+                            {
+                                lineCount++;
+                                byteCount += Encoding.UTF8.GetByteCount(line + Environment.NewLine);
+                                wordCount += line.Split(new char[] { ' ', '\t' }, StringSplitOptions.RemoveEmptyEntries).Length;
+                            }
+                        }
+                    }
+                    catch(Exception e)
+                    {
+                        Console.WriteLine(e.Message);
+                    }
+                    Console.WriteLine(lineCount);
+                    Console.WriteLine(wordCount);
+                    Console.WriteLine(byteCount);
+                }
                 else if (query.StartsWith("cd"))
                 {
                     try
@@ -92,8 +165,14 @@ namespace pomogaybo
                 }
                 else if (query.StartsWith("mkdir"))
                 {
-                    string path = query.Replace("mkdir", "");
-                    try
+                    string path = query.Replace("mkdir ", "");
+                    string[] folders = path.Split(' ');
+
+                    foreach (string fNAme in folders)
+                    {
+                        Directory.CreateDirectory(fNAme);
+                    }
+                    /*try
                     {
                         if (!Directory.Exists(path))
                             Directory.CreateDirectory(path);
@@ -101,28 +180,17 @@ namespace pomogaybo
                     catch (Exception e)
                     {
                         Console.WriteLine(e.Message);
-                    }
+                    }*/
                 }
                 else if (query.StartsWith("rmdir"))
                 {
-                    string path = query.Replace("rmdir", "");
-
-                    try
-                    {
-                        Directory.Delete(path, true);
-                        Console.WriteLine("Каталог удален");
-                    }
-                    catch (Exception e)
-                    {
-                        Console.WriteLine(e.Message);
-                    }
-
+                    string folders = query.Replace("rmdir ", "");
+                    p.GetProcess("cmd.exe", $"/c rd /s /q {folders}");
                 }    
                 else if (query.StartsWith("cat"))
                 {
                     string path = query.Replace("cat", "");
-                    string path2 = path.Replace(" ", "");
-                    Console.WriteLine(rl.ReadLinesAll(path2));
+                    Console.WriteLine(rl.ReadLinesAll(path.Replace(" ", "")));
                 }
                 else if (query.StartsWith("touch"))
                 {
@@ -155,8 +223,7 @@ namespace pomogaybo
                 else if (query.StartsWith("head"))
                 {
                     string path = query.Replace("head", "");
-                    string path2 = path.Replace(" ", "");
-                    rl.Read(10, path2);
+                    rl.Read(10, path.Replace("", ""));
                 }
                 else if (query.StartsWith("ls") && query.EndsWith("-l"))
                 {
@@ -188,16 +255,19 @@ namespace pomogaybo
                 }
                 else if (query.StartsWith("du") && query.EndsWith("-h"))
                 {
-                    string folder = Directory.GetCurrentDirectory();
-                    int catalogSize = 0;
                     try
                     {
-                        Console.WriteLine(size.GetSize(folder, catalogSize) / 1024 + " M");
+                        Console.WriteLine(size.GetSize(Directory.GetCurrentDirectory(), 0) / 1024 + " M");
                     }
                     catch (Exception e)
                     {
                         Console.WriteLine(e.Message);
                     }
+                }
+                else if (query.StartsWith("du") && query.EndsWith("-ha"))
+                {
+                    string path = Directory.GetCurrentDirectory();
+                    p.GetDir(Directory.GetFiles(path, "*", SearchOption.AllDirectories));
                 }
                 else
                 {
@@ -221,16 +291,11 @@ namespace pomogaybo
                                     Console.WriteLine(s);
                                 }
                             }
-                            
                             break;
 
                         case "man":
-                            Process process = new Process();
-                            process.StartInfo.FileName = "cmd.exe";
-                            process.StartInfo.Arguments = "/?";
-                            process.StartInfo.UseShellExecute = false;
-                            process.StartInfo.RedirectStandardOutput = true;
-                            process.Start();
+                            p.GetProcess("cmd.exe", "/?");
+                            process.WaitForExit();
                             query = process.StandardOutput.ReadToEnd();
                             Console.WriteLine(query);
                             break;
@@ -256,11 +321,9 @@ namespace pomogaybo
                             break;
 
                         case "du":
-                            string folder = Directory.GetCurrentDirectory();
-                            int catalogSize = 0;
                             try
                             {
-                                Console.WriteLine(size.GetSize(folder, catalogSize));
+                                Console.WriteLine(size.GetSize(Directory.GetCurrentDirectory(), 0));
                             }
                             catch (Exception e)
                             {
@@ -268,7 +331,23 @@ namespace pomogaybo
                             }
                             break;
 
+                        case "df":
+                            DriveInfo[] allDrives = DriveInfo.GetDrives();
+                            foreach (DriveInfo drive in allDrives)
+                            {
+                                Console.WriteLine($"Name: {0}" + drive.Name);
+                                Console.WriteLine($"Type: {0}" + drive.DriveType);
 
+                                if(drive.IsReady == true)
+                                {
+                                    Console.WriteLine($"Volume Label: {0}" + drive.VolumeLabel);
+                                    Console.WriteLine($"File System: {0}" + drive.DriveFormat);
+                                    Console.WriteLine($"Total availabe space: {0}" + drive.TotalFreeSpace);
+                                    Console.WriteLine($"Available space for current user: {0}" + drive.AvailableFreeSpace);
+                                    Console.WriteLine($"Size: {0}" + drive.TotalSize);
+                                }
+                            }
+                            break;
                     }
                 }
             }

@@ -17,13 +17,11 @@ namespace pomogaybo
 
             foreach (FileInfo f in fi)
             {
-
                 catalogSize = catalogSize + f.Length;
             }
 
             foreach (DirectoryInfo df in diA)
             {
-
                 GetSize(df.FullName, catalogSize);
             }
 
