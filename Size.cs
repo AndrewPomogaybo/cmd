@@ -11,11 +11,11 @@ namespace pomogaybo
     {
         public double GetSize(string folder, double catalogSize)
         {
-            DirectoryInfo di = new DirectoryInfo(folder);
-            DirectoryInfo[] diA = di.GetDirectories();
-            FileInfo[] fi = di.GetFiles();
+            DirectoryInfo directoryinfo = new DirectoryInfo(folder);
+            DirectoryInfo[] diA = directoryinfo.GetDirectories();
+            FileInfo[] fileinfo = directoryinfo.GetFiles();
 
-            foreach (FileInfo f in fi)
+            foreach (FileInfo f in fileinfo)
             {
                 catalogSize = catalogSize + f.Length;
             }

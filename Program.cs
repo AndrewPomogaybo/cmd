@@ -140,9 +140,14 @@ namespace pomogaybo
                 }
                 else if (query.StartsWith("wc"))
                 {
-                    string path = Directory.GetCurrentDirectory();
+                    string file = query.Replace("wc ", "");
+                    string text = File.ReadAllText(file);
 
-                    int lineCount = 0;
+                    int lines = text.Split('\n').Length;
+                    int words = text.Split(new [] {' ', '\t','\n','\r'}, StringSplitOptions.RemoveEmptyEntries).Length;
+                    int chars = text.Length;
+                    Console.WriteLine($"{lines}, {words}, {chars}, {file}");
+                    /*int lineCount = 0;
                     int wordCount = 0;
                     int byteCount = 0;
 
@@ -165,7 +170,7 @@ namespace pomogaybo
                     }
                     Console.WriteLine(lineCount);
                     Console.WriteLine(wordCount);
-                    Console.WriteLine(byteCount);
+                    Console.WriteLine(byteCount);*/
                 }
                 else if (query.StartsWith("cd"))
                 {
