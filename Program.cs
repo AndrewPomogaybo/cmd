@@ -5,6 +5,7 @@ using System.IO;
 using System.Linq;
 using System.Security.AccessControl;
 using System.Text;
+using System.Text.RegularExpressions;
 using System.Threading.Tasks;
 using System.Web.UI.MobileControls;
 
@@ -18,6 +19,7 @@ namespace pomogaybo
             Processes p = new Processes();
             Size size = new Size();
             Process process = new Process();
+            TailArgs tail = new TailArgs();
 
             while (true)
             {
@@ -103,6 +105,14 @@ namespace pomogaybo
                 {
                     Console.WriteLine(rl.ReadLinesAll(@"C:\Users\Student\Desktop\pomogaybo\args\wc.txt"));
                 }
+                else if (query.StartsWith("kill") && query.EndsWith("--help"))
+                {
+                    Console.WriteLine(rl.ReadLinesAll(@"C:\Users\Student\Desktop\pomogaybo\args\kill.txt"));
+                }
+                else if (query.StartsWith("tail") && query.EndsWith("--help"))
+                {
+                    Console.WriteLine(rl.ReadLinesAll(@"C:\Users\Student\Desktop\pomogaybo\args\tail.txt"));
+                }
                 else if(query.StartsWith("rm") && query.EndsWith("-r"))
                 {
                     string directory = Directory.GetCurrentDirectory();
@@ -114,6 +124,50 @@ namespace pomogaybo
                     catch (Exception e)
                     {
                         Console.WriteLine(e.Message);
+                    }
+                }
+                else if (query.StartsWith("tail -n"))
+                {
+                    string path = query.Replace($"tail -n ", "");
+
+                    string pattern = @"\d+";
+
+                    Match match = Regex.Match(query, pattern);
+
+                    if (match.Success)
+                    {
+                        string number = match.Value;
+                        string file = path.Replace($"{number} ", "");
+                        int num = Convert.ToInt32(number);
+                        tail.Tail(file, num);  
+                    }
+                    /*string file = path.Replace(path[0], ' ');
+                    string file2 = file.Replace(file[1], ' ');
+                    string file3 = file2.Replace(file2[2], ' ');
+                    string file4 = file3.Replace("  ", "");*/
+                   
+                }
+                else if (query.StartsWith("tail"))
+                {
+                    string file = query.Replace("tail ", "");
+                    int CountLines = 10;
+                    using(StreamReader reader = File.OpenText(file))
+                    {
+                        string[] lines = new string[CountLines];
+                        int i = 0;
+                        while (!reader.EndOfStream)
+                        {
+                            lines[i] = reader.ReadLine();
+                            i = (i + 1) % CountLines;
+                        }
+                        for(int j = 0; j < CountLines; j++)
+                        {
+                            int index = (i + j) % CountLines;
+                            if(lines[index] != null)
+                            {
+                                Console.WriteLine(lines[index]);
+                            }
+                        }
                     }
                 }
                 else if (query.StartsWith("cat -n"))
@@ -140,37 +194,36 @@ namespace pomogaybo
                 }
                 else if (query.StartsWith("wc"))
                 {
-                    string file = query.Replace("wc ", "");
-                    string text = File.ReadAllText(file);
-
-                    int lines = text.Split('\n').Length;
-                    int words = text.Split(new [] {' ', '\t','\n','\r'}, StringSplitOptions.RemoveEmptyEntries).Length;
-                    int chars = text.Length;
-                    Console.WriteLine($"{lines}, {words}, {chars}, {file}");
-                    /*int lineCount = 0;
-                    int wordCount = 0;
-                    int byteCount = 0;
-
                     try
                     {
-                        using (StreamReader reader = new StreamReader(path))
-                        {
-                            string line;
-                            while ((line = reader.ReadLine()) != null)
-                            {
-                                lineCount++;
-                                byteCount += Encoding.UTF8.GetByteCount(line + Environment.NewLine);
-                                wordCount += line.Split(new char[] { ' ', '\t' }, StringSplitOptions.RemoveEmptyEntries).Length;
-                            }
-                        }
+                        string file = query.Replace("wc ", "");
+                        string text = File.ReadAllText(file);
+
+                        int lines = text.Split('\n').Length;
+                        int words = text.Split(new[] { ' ', '\t', '\n', '\r' }, StringSplitOptions.RemoveEmptyEntries).Length;
+                        int chars = text.Length;
+                        Console.WriteLine($"{lines}, {words}, {chars}, {file}");
                     }
-                    catch(Exception e)
+                    catch (Exception e)
                     {
                         Console.WriteLine(e.Message);
                     }
-                    Console.WriteLine(lineCount);
-                    Console.WriteLine(wordCount);
-                    Console.WriteLine(byteCount);*/
+                    
+                }
+                else if (query.StartsWith("kill"))
+                {
+                    try
+                    {
+                        string path = query.Replace("kill ", "");
+                        ProcessStartInfo psi = new ProcessStartInfo();
+                        p.DoProcess("cmd.exe", "/C taskkill /F /IM " + path);
+                        psi.Verb = "runas";
+                    }
+                    catch (Exception e)
+                    {
+                        Console.WriteLine(e.Message);
+                    }
+
                 }
                 else if (query.StartsWith("cd"))
                 {
