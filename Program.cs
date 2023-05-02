@@ -128,47 +128,30 @@ namespace pomogaybo
                 }
                 else if (query.StartsWith("tail -n"))
                 {
-                    string path = query.Replace($"tail -n ", "");
-
-                    string pattern = @"\d+";
-
-                    Match match = Regex.Match(query, pattern);
-
-                    if (match.Success)
+                    try
                     {
-                        string number = match.Value;
-                        string file = path.Replace($"{number} ", "");
-                        int num = Convert.ToInt32(number);
-                        tail.Tail(file, num);  
+                        string path = query.Replace($"tail -n ", "");
+
+                        string pattern = @"\d+";
+
+                        Match match = Regex.Match(query, pattern);
+
+                        if (match.Success)
+                        {
+                            string number = match.Value;
+                            string file = path.Replace($"{number} ", "");
+                            int num = Convert.ToInt32(number);
+                            tail.Tail(file, num);
+                        }
                     }
-                    /*string file = path.Replace(path[0], ' ');
-                    string file2 = file.Replace(file[1], ' ');
-                    string file3 = file2.Replace(file2[2], ' ');
-                    string file4 = file3.Replace("  ", "");*/
-                   
+                    catch (Exception e)
+                    {
+                        Console.WriteLine(e.Message);
+                    }
                 }
                 else if (query.StartsWith("tail"))
                 {
-                    string file = query.Replace("tail ", "");
-                    int CountLines = 10;
-                    using(StreamReader reader = File.OpenText(file))
-                    {
-                        string[] lines = new string[CountLines];
-                        int i = 0;
-                        while (!reader.EndOfStream)
-                        {
-                            lines[i] = reader.ReadLine();
-                            i = (i + 1) % CountLines;
-                        }
-                        for(int j = 0; j < CountLines; j++)
-                        {
-                            int index = (i + j) % CountLines;
-                            if(lines[index] != null)
-                            {
-                                Console.WriteLine(lines[index]);
-                            }
-                        }
-                    }
+                    tail.Tail(query.Replace("tail ", ""), 10);
                 }
                 else if (query.StartsWith("cat -n"))
                 {
@@ -209,6 +192,47 @@ namespace pomogaybo
                         Console.WriteLine(e.Message);
                     }
                     
+                }
+                else if (query.StartsWith("cp"))
+                {
+                    string path = query.Replace("cp ", "");
+                    int indexForFile = 0;
+                    int length = path.IndexOf(' ', indexForFile) - indexForFile;
+                    if(length <= 0)
+                    {
+                        length = path.Length - indexForFile;
+
+                    }
+                    string file = path.Substring(indexForFile, length);
+                    Console.WriteLine(file);
+                    //-------------------------------------------------------------------------------
+                    /*int indexForFile2 = 8;
+                    int lengthForFile2 = path.IndexOf(' ', indexForFile2) - indexForFile2;
+                    if (lengthForFile2 <= 0)
+                    {
+                        lengthForFile2 = path.Length - indexForFile2;
+
+                    }
+                    string f = path.Substring(indexForFile2, lengthForFile2);
+                    string FileName = f.Replace(" ", "");*/
+
+                    //-------------------------------------------------------------------------------
+
+                    int indexForDir = 9;
+                    int lengthForDir = path.IndexOf(' ', indexForDir) - indexForDir;
+                    if (lengthForDir <= 0)
+                    {
+                        lengthForDir = path.Length - indexForDir;
+
+                    }
+                    string dir = path.Substring(indexForDir, lengthForDir);
+                    string directory = dir.Replace(" ", "");
+
+                    string files = Path.GetFileName(file);
+                    File.Copy(file, Path.Combine(directory, files));
+                    //File.Copy(file, directory, true);
+
+
                 }
                 else if (query.StartsWith("kill"))
                 {
