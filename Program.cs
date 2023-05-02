@@ -193,46 +193,91 @@ namespace pomogaybo
                     }
                     
                 }
-                else if (query.StartsWith("cp"))
+                else if (query.StartsWith("cp -r"))
                 {
-                    string path = query.Replace("cp ", "");
-                    int indexForFile = 0;
+                    string path = query.Replace("cp -r ", "");
+
+                    string[] words = query.Split(' ');
+                    string dir1 = words[2];
+
+                    /*int indexForFile = 0;
                     int length = path.IndexOf(' ', indexForFile) - indexForFile;
-                    if(length <= 0)
+                    if (length <= 0)
                     {
                         length = path.Length - indexForFile;
 
                     }
-                    string file = path.Substring(indexForFile, length);
-                    Console.WriteLine(file);
-                    //-------------------------------------------------------------------------------
-                    /*int indexForFile2 = 8;
-                    int lengthForFile2 = path.IndexOf(' ', indexForFile2) - indexForFile2;
-                    if (lengthForFile2 <= 0)
-                    {
-                        lengthForFile2 = path.Length - indexForFile2;
+                    string dir1 = path.Substring(indexForFile, length);*/
+                    Console.WriteLine(dir1);
 
-                    }
-                    string f = path.Substring(indexForFile2, lengthForFile2);
-                    string FileName = f.Replace(" ", "");*/
-
-                    //-------------------------------------------------------------------------------
-
-                    int indexForDir = 9;
+                    string directory = words[3];
+                    /*int indexForDir = 4;
                     int lengthForDir = path.IndexOf(' ', indexForDir) - indexForDir;
                     if (lengthForDir <= 0)
                     {
                         lengthForDir = path.Length - indexForDir;
 
                     }
-                    string dir = path.Substring(indexForDir, lengthForDir);
-                    string directory = dir.Replace(" ", "");
+                    string dir2 = path.Substring(indexForDir, lengthForDir);
+                    string directory = dir2.Replace(" ", "");*/
+                    Console.WriteLine(directory);
 
-                    string files = Path.GetFileName(file);
-                    File.Copy(file, Path.Combine(directory, files));
-                    //File.Copy(file, directory, true);
+                    Directory.CreateDirectory(directory);
 
+                    foreach (string file in Directory.GetFiles(dir1))
+                    {
+                        string FileName = Path.GetFileName(file);
+                        string destFile = Path.Combine(directory, FileName);
+                        File.Copy(file, destFile, true);
+                    }
 
+                    foreach(string folder in Directory.GetDirectories(dir1))
+                    {
+                        string folderName = Path.GetFileName(folder);
+                        string destFolder = Path.Combine(directory, folderName);
+                        Directory.CreateDirectory(destFolder);
+
+                        foreach (string file in Directory.GetFiles(folder, "*", SearchOption.AllDirectories))
+                        {
+                            string fileName = Path.GetFileName(file);
+                            string destFile = Path.Combine(destFolder, fileName);
+                            File.Copy(file, destFile,true);
+                        }
+                    }
+                    //string files = Path.GetFileName(file);
+                    //File.Copy(file, Path.Combine(directory, files));
+                }
+                else if (query.StartsWith("cp"))
+                {
+                    try
+                    {
+                        string path = query.Replace("cp ", "");
+                        int indexForFile = 0;
+                        int length = path.IndexOf(' ', indexForFile) - indexForFile;
+                        if (length <= 0)
+                        {
+                            length = path.Length - indexForFile;
+
+                        }
+                        string file = path.Substring(indexForFile, length);
+
+                        int indexForDir = 9;
+                        int lengthForDir = path.IndexOf(' ', indexForDir) - indexForDir;
+                        if (lengthForDir <= 0)
+                        {
+                            lengthForDir = path.Length - indexForDir;
+
+                        }
+                        string dir = path.Substring(indexForDir, lengthForDir);
+                        string directory = dir.Replace(" ", "");
+
+                        string files = Path.GetFileName(file);
+                        File.Copy(file, Path.Combine(directory, files));
+                    }
+                    catch (Exception e)
+                    {
+                        Console.WriteLine(e.Message);
+                    }
                 }
                 else if (query.StartsWith("kill"))
                 {
@@ -255,7 +300,7 @@ namespace pomogaybo
                     {
                         string[] path = query.Split('\\');
                         string pathNew = string.Join("\\", path);
-                        string rightPath = pathNew.Replace("cd", "");
+                        string rightPath = pathNew.Replace("cd ", "");
                         Console.WriteLine("");
                         Directory.SetCurrentDirectory(rightPath);
                     }

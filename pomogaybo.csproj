@@ -50,7 +50,6 @@
     <Compile Include="ReadLiner.cs" />
     <Compile Include="Size.cs" />
     <Compile Include="Tail.cs" />
-    <Compile Include="UnameCmd.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="App.config" />
